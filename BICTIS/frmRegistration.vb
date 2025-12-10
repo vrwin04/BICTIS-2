@@ -2,8 +2,12 @@
 
 Public Class frmRegistration
     Private Sub btnRegister_Click(sender As Object, e As EventArgs) Handles btnRegister.Click
-        If txtUsername.Text = "" Or txtPassword.Text = "" Or txtFullName.Text = "" Then
-            MessageBox.Show("All fields required.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        ' VALIDATION CONDITION
+        If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse
+           String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
+           String.IsNullOrWhiteSpace(txtFullName.Text) Then
+
+            MessageBox.Show("All fields are required. Please complete the form.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
@@ -12,15 +16,15 @@ Public Class frmRegistration
             Exit Sub
         End If
 
-        ' FIX: Check duplicate in tblResidents
+        ' Check Duplicate
         Dim checkParams As New Dictionary(Of String, Object)
         checkParams.Add("@user", txtUsername.Text)
         If Session.GetCount("SELECT COUNT(*) FROM tblResidents WHERE Username=@user", checkParams) > 0 Then
-            MessageBox.Show("Username taken.", "Unavailable", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+            MessageBox.Show("Username is already taken.", "Unavailable", MessageBoxButtons.OK, MessageBoxIcon.Stop)
             Exit Sub
         End If
 
-        ' FIX: Insert into tblResidents
+        ' Insert
         Dim query As String = "INSERT INTO tblResidents (Username, [Password], Role, FullName, IsActive) VALUES (@user, @pass, 'User', @full, True)"
         Dim params As New Dictionary(Of String, Object)
         params.Add("@user", txtUsername.Text)

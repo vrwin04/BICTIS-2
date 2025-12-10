@@ -2,12 +2,12 @@
 
 Public Class frmLogin
     Private Sub btnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
-        If txtUsername.Text = "" Or txtPassword.Text = "" Then
-            MessageBox.Show("Please enter credentials.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        ' VALIDATION CONDITION
+        If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse String.IsNullOrWhiteSpace(txtPassword.Text) Then
+            MessageBox.Show("Please enter both Username and Password.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
-        ' FIX: Correct Column Names for tblResidents
         Dim query As String = "SELECT * FROM tblResidents WHERE Username=@user AND [Password]=@pass"
         Dim params As New Dictionary(Of String, Object)
         params.Add("@user", txtUsername.Text)
@@ -16,7 +16,6 @@ Public Class frmLogin
         Dim dt As DataTable = Session.GetDataTable(query, params)
 
         If dt.Rows.Count > 0 Then
-            ' FIX: Using ResidentID instead of UserID
             Session.CurrentResidentID = Convert.ToInt32(dt.Rows(0)("ResidentID"))
             Session.CurrentUserRole = dt.Rows(0)("Role").ToString()
             Session.CurrentUserName = dt.Rows(0)("Username").ToString()

@@ -2,18 +2,25 @@
 
 Public Class frmFileBlotter
     Private Sub frmFileBlotter_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        cbType.Items.AddRange(New String() {"Physical Injury", "Theft", "Property Dispute", "Harassment", "Other"})
+        ' Ensure items are populated
+        If cbType.Items.Count = 0 Then
+            cbType.Items.AddRange(New String() {"Physical Injury", "Theft", "Property Dispute", "Harassment", "Other"})
+        End If
     End Sub
 
     Private Sub btnSubmit_Click(sender As Object, e As EventArgs) Handles btnSubmit.Click
-        If cbType.Text = "" Or txtNarrative.Text = "" Or txtRespondent.Text = "" Then
-            MessageBox.Show("Please fill in all details.", "Missing Info", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        ' VALIDATION CONDITION
+        If String.IsNullOrWhiteSpace(cbType.Text) OrElse
+           String.IsNullOrWhiteSpace(txtRespondent.Text) OrElse
+           String.IsNullOrWhiteSpace(txtNarrative.Text) Then
+
+            MessageBox.Show("Please fill in all details, including the Respondent's name and the Narrative.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
         Dim respondentInfo As String = "[Respondent: " & txtRespondent.Text & "] " & txtNarrative.Text
 
-        ' Save with Category = 'Blotter'
+        ' Insert
         Dim query As String = "INSERT INTO tblIncidents (ComplainantID, RespondentID, IncidentType, Narrative, Status, IncidentDate, Category) " &
                               "VALUES (@uid, 0, @type, @narr, 'Pending', @date, 'Blotter')"
 
