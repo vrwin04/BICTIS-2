@@ -230,9 +230,9 @@ Partial Class frmBlotter
         Me.Label2.ForeColor = System.Drawing.Color.Gray
         Me.Label2.Location = New System.Drawing.Point(22, 130)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(155, 19)
+        Me.Label2.Size = New System.Drawing.Size(185, 19)
         Me.Label2.TabIndex = 3
-        Me.Label2.Text = "Respondent (Resident)"
+        Me.Label2.Text = "Respondent (Barangay/LGU)"
         '
         'cbRespondent
         '
@@ -252,9 +252,9 @@ Partial Class frmBlotter
         Me.Label1.ForeColor = System.Drawing.Color.Gray
         Me.Label1.Location = New System.Drawing.Point(22, 65)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(131, 19)
+        Me.Label1.Size = New System.Drawing.Size(152, 19)
         Me.Label1.TabIndex = 1
-        Me.Label1.Text = "Complainant (LGU)"
+        Me.Label1.Text = "Complainant (Resident)"
         '
         'cbComplainant
         '
