@@ -141,7 +141,8 @@ Partial Class frmReportConcern
         Me.cbType.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.cbType.Font = New System.Drawing.Font("Segoe UI", 11.0!)
         Me.cbType.FormattingEnabled = True
-        Me.cbType.Items.AddRange(New Object() {"Noise Complaint", "Waste Disposal", "Neighborhood Dispute", "Suspicious Activity", "Other"})
+        ' UPDATED LIST TO MATCH FRMBLOTTER
+        Me.cbType.Items.AddRange(New Object() {"Physical Injury", "Theft / Robbery", "Malicious Mischief", "Unjust Vexation", "Threats", "Noise Complaint", "Curfew Violation", "Property Dispute", "Other"})
         Me.cbType.Location = New System.Drawing.Point(50, 80)
         Me.cbType.Name = "cbType"
         Me.cbType.Size = New System.Drawing.Size(400, 28)
