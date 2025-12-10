@@ -4,6 +4,7 @@ Imports System.Windows.Forms
 Imports System.Data
 Imports System.Collections.Generic
 Imports System.Threading.Tasks ' Required for Async
+Imports System.Drawing ' Required for Color
 
 Public Class adminDashboard
     Private Async Sub adminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -47,10 +48,26 @@ Public Class adminDashboard
     Private Sub LoadFilterOptions()
         cbIncidentType.Items.Clear()
         cbIncidentType.Items.Add("All Incidents")
+
+        ' --- BLOTTER CASES ---
+        cbIncidentType.Items.Add("Physical Injury")
+        cbIncidentType.Items.Add("Theft / Robbery")
+        cbIncidentType.Items.Add("Property / Land Dispute")
+        cbIncidentType.Items.Add("Harassment / Threats")
+        cbIncidentType.Items.Add("Unjust Vexation")
+        cbIncidentType.Items.Add("Malicious Mischief")
+        cbIncidentType.Items.Add("Estafa / Swindling")
+        cbIncidentType.Items.Add("Libel / Slander")
+
+        ' --- COMMUNITY CONCERNS ---
         cbIncidentType.Items.Add("Noise Complaint")
-        cbIncidentType.Items.Add("Waste Disposal")
-        cbIncidentType.Items.Add("Neighborhood Dispute")
+        cbIncidentType.Items.Add("Waste Disposal / Trash")
         cbIncidentType.Items.Add("Suspicious Activity")
+        cbIncidentType.Items.Add("Public Disturbance")
+        cbIncidentType.Items.Add("Broken Street Light / Infrastructure")
+        cbIncidentType.Items.Add("Animal Control / Stray Pets")
+        cbIncidentType.Items.Add("Curfew Violation")
+
         cbIncidentType.Items.Add("Other")
         cbIncidentType.SelectedIndex = 0
     End Sub
@@ -87,7 +104,7 @@ Public Class adminDashboard
 
         If isAllIncidents Then
             series.ChartType = SysChart.SeriesChartType.Column
-            chartIncidents.Palette = SysChart.ChartColorPalette.BrightPastel
+            ' We will set colors manually per point below
             chartIncidents.Titles.Add("All Incidents Overview")
         Else
             series.ChartType = SysChart.SeriesChartType.Pie
@@ -104,7 +121,36 @@ Public Class adminDashboard
                 If String.IsNullOrEmpty(xVal) Then xVal = "Unknown"
 
                 Dim yVal As Integer = Convert.ToInt32(row("Count"))
-                series.Points.AddXY(xVal, yVal)
+
+                ' Add Point
+                Dim pIndex As Integer = series.Points.AddXY(xVal, yVal)
+                Dim p As SysChart.DataPoint = series.Points(pIndex)
+
+                ' --- COLOR CODING LOGIC ---
+                If isAllIncidents Then
+                    Select Case xVal
+                        ' CRIMES (Reds/Purples)
+                        Case "Physical Injury" : p.Color = Color.Crimson
+                        Case "Theft / Robbery" : p.Color = Color.DarkRed
+                        Case "Harassment / Threats" : p.Color = Color.OrangeRed
+                        Case "Unjust Vexation" : p.Color = Color.Purple
+                        Case "Malicious Mischief" : p.Color = Color.DarkMagenta
+                        Case "Estafa / Swindling" : p.Color = Color.Indigo
+                        Case "Libel / Slander" : p.Color = Color.SlateBlue
+                        Case "Property / Land Dispute" : p.Color = Color.SaddleBrown
+
+                        ' CONCERNS (Greens/Yellows/Blues)
+                        Case "Noise Complaint" : p.Color = Color.DarkOrange
+                        Case "Waste Disposal / Trash" : p.Color = Color.ForestGreen
+                        Case "Suspicious Activity" : p.Color = Color.DimGray
+                        Case "Public Disturbance" : p.Color = Color.Goldenrod
+                        Case "Broken Street Light / Infrastructure" : p.Color = Color.Teal
+                        Case "Animal Control / Stray Pets" : p.Color = Color.OliveDrab
+                        Case "Curfew Violation" : p.Color = Color.MidnightBlue
+
+                        Case Else : p.Color = Color.SteelBlue
+                    End Select
+                End If
             Next
         Else
             series.Points.AddXY("No Data", 0)
@@ -114,7 +160,6 @@ Public Class adminDashboard
     End Function
 
     ' --- NAVIGATION BUTTONS ---
-    ' (These remain mostly the same, but we trigger the async refreshes)
 
     Private Async Sub btnResidents_Click(sender As Object, e As EventArgs) Handles btnResidents.Click
         Dim frm As New frmManageResidents()
