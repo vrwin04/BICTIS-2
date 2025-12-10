@@ -63,7 +63,10 @@ Public Class adminDashboard
             Dim series As New SysChart.Series("Incidents")
             series.ChartType = SysChart.SeriesChartType.Column
             series.IsValueShownAsLabel = True
-            series.Color = Color.FromArgb(41, 128, 185)
+
+            ' *** COLOR CODING CHANGE ***
+            ' Using a Palette makes each bar a different color automatically
+            chartIncidents.Palette = SysChart.ChartColorPalette.BrightPastel
 
             If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
                 For Each row As DataRow In dt.Rows
@@ -73,7 +76,7 @@ Public Class adminDashboard
                 Next
             End If
             chartIncidents.Series.Add(series)
-            chartIncidents.Titles.Add("All Incidents Overview")
+            chartIncidents.Titles.Add("All Incidents Overview (By Type)")
 
         Else
             ' Show Pie Chart of STATUS for Selected Type
@@ -86,6 +89,8 @@ Public Class adminDashboard
             Dim series As New SysChart.Series("Status")
             series.ChartType = SysChart.SeriesChartType.Pie
             series.IsValueShownAsLabel = True
+            ' Pie charts are automatically color coded by slice
+            chartIncidents.Palette = SysChart.ChartColorPalette.SeaGreen
 
             If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
                 For Each row As DataRow In dt.Rows

@@ -9,9 +9,18 @@ Public Class frmConcerns
     End Sub
 
     Private Sub LoadData()
-        ' LOAD ONLY CONCERNS
         Dim sql As String = "SELECT IncidentID, IncidentType, Narrative, Status, IncidentDate FROM tblIncidents WHERE Category='Concern' ORDER BY IncidentID DESC"
         dgvCases.DataSource = Session.GetDataTable(sql)
+    End Sub
+
+    ' *** NEW: Double Click to View Details ***
+    Private Sub dgvCases_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvCases.CellDoubleClick
+        If e.RowIndex >= 0 Then
+            Dim id As Integer = Convert.ToInt32(dgvCases.Rows(e.RowIndex).Cells("IncidentID").Value)
+            Dim detailsForm As New frmCaseDetails()
+            detailsForm.LoadData(id)
+            detailsForm.ShowDialog()
+        End If
     End Sub
 
     Private Sub cbStatus_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbStatus.SelectedIndexChanged
@@ -30,7 +39,6 @@ Public Class frmConcerns
         Dim currentStatus As String = dgvCases.SelectedRows(0).Cells("Status").Value.ToString()
         Dim newStatus As String = cbStatus.Text
 
-        ' LOCK LOGIC: Cannot change if already Resolved or Invalid
         If currentStatus = "Resolved" Or currentStatus = "Invalid" Then
             MessageBox.Show("This concern is already closed (" & currentStatus & ") and cannot be modified.", "Locked", MessageBoxButtons.OK, MessageBoxIcon.Stop)
             Exit Sub
