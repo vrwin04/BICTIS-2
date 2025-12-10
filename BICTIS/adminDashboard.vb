@@ -3,26 +3,38 @@ Imports SysChart = System.Windows.Forms.DataVisualization.Charting
 Imports System.Windows.Forms
 Imports System.Data
 Imports System.Collections.Generic
+Imports System.Threading.Tasks ' Required for Async
 
 Public Class adminDashboard
-    Private Sub adminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Async Sub adminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         lblPageTitle.Text = "Dashboard - " & Session.CurrentUserRole
 
         Try
-            LoadStats()
+            ' Load Filters first (Fast, no DB)
             LoadFilterOptions()
-            LoadChart() ' Initial Load (All)
+
+            ' Run DB tasks concurrently for speed
+            Dim taskStats = LoadStatsAsync()
+            Dim taskChart = LoadChartAsync()
+
+            Await Task.WhenAll(taskStats, taskChart)
+
         Catch ex As Exception
             MessageBox.Show("Error loading dashboard: " & ex.Message)
         End Try
     End Sub
 
-    Private Sub LoadStats()
-        Dim userCount As Integer = Session.GetCount("SELECT COUNT(*) FROM tblResidents WHERE Role='User'")
-        lblTotalUsers.Text = userCount.ToString()
+    Private Async Function LoadStatsAsync() As Task
+        ' Fetch both counts in parallel
+        Dim taskUserCount = Session.GetCountAsync("SELECT COUNT(*) FROM tblResidents WHERE Role='User'")
+        Dim taskPending = Session.GetCountAsync("SELECT COUNT(*) FROM tblIncidents WHERE Status='Pending'")
 
-        ' Count Pending Cases (Both Blotter and Concerns)
-        Dim pending As Integer = Session.GetCount("SELECT COUNT(*) FROM tblIncidents WHERE Status='Pending'")
+        ' Wait for both
+        Dim userCount As Integer = Await taskUserCount
+        Dim pending As Integer = Await taskPending
+
+        ' Update UI
+        lblTotalUsers.Text = userCount.ToString()
         lblPendingCases.Text = pending.ToString()
 
         If pending > 0 Then
@@ -30,7 +42,7 @@ Public Class adminDashboard
         Else
             lblPendingCases.ForeColor = Color.Green
         End If
-    End Sub
+    End Function
 
     Private Sub LoadFilterOptions()
         cbIncidentType.Items.Clear()
@@ -43,90 +55,85 @@ Public Class adminDashboard
         cbIncidentType.SelectedIndex = 0
     End Sub
 
-    Private Sub cbIncidentType_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbIncidentType.SelectedIndexChanged
-        LoadChart()
+    Private Async Sub cbIncidentType_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbIncidentType.SelectedIndexChanged
+        Await LoadChartAsync()
     End Sub
 
-    Private Sub LoadChart()
-        If chartIncidents Is Nothing Then Exit Sub
+    Private Async Function LoadChartAsync() As Task
+        If chartIncidents Is Nothing Then Exit Function
 
+        ' We need to manipulate the chart on the UI thread, but fetch data Async
+        Dim selection As String = cbIncidentType.Text
+        Dim query As String
+        Dim params As New Dictionary(Of String, Object)
+        Dim isAllIncidents As Boolean = (selection = "All Incidents")
+
+        If isAllIncidents Then
+            query = "SELECT IncidentType, COUNT(*) as [Count] FROM tblIncidents GROUP BY IncidentType"
+        Else
+            query = "SELECT Status, COUNT(*) as [Count] FROM tblIncidents WHERE IncidentType=@type GROUP BY Status"
+            params.Add("@type", selection)
+        End If
+
+        ' Fetch Data Background
+        Dim dt As DataTable = Await Session.GetDataTableAsync(query, params)
+
+        ' Update UI
         chartIncidents.Series.Clear()
         chartIncidents.Titles.Clear()
 
-        Dim selection As String = cbIncidentType.Text
+        Dim seriesName As String = If(isAllIncidents, "Incidents", "Status")
+        Dim series As New SysChart.Series(seriesName)
 
-        If selection = "All Incidents" Then
-            ' Show Bar Chart of ALL Types
-            Dim query As String = "SELECT IncidentType, COUNT(*) as [Count] FROM tblIncidents GROUP BY IncidentType"
-            Dim dt As DataTable = Session.GetDataTable(query)
-
-            Dim series As New SysChart.Series("Incidents")
+        If isAllIncidents Then
             series.ChartType = SysChart.SeriesChartType.Column
-            series.IsValueShownAsLabel = True
-
-            ' *** COLOR CODING CHANGE ***
-            ' Using a Palette makes each bar a different color automatically
             chartIncidents.Palette = SysChart.ChartColorPalette.BrightPastel
-
-            If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
-                For Each row As DataRow In dt.Rows
-                    Dim iType As String = If(IsDBNull(row("IncidentType")), "Unknown", row("IncidentType").ToString())
-                    Dim iCount As Integer = Convert.ToInt32(row("Count"))
-                    series.Points.AddXY(iType, iCount)
-                Next
-            End If
-            chartIncidents.Series.Add(series)
-            chartIncidents.Titles.Add("All Incidents Overview (By Type)")
-
+            chartIncidents.Titles.Add("All Incidents Overview")
         Else
-            ' Show Pie Chart of STATUS for Selected Type
-            Dim query As String = "SELECT Status, COUNT(*) as [Count] FROM tblIncidents WHERE IncidentType=@type GROUP BY Status"
-            Dim params As New Dictionary(Of String, Object)
-            params.Add("@type", selection)
-
-            Dim dt As DataTable = Session.GetDataTable(query, params)
-
-            Dim series As New SysChart.Series("Status")
             series.ChartType = SysChart.SeriesChartType.Pie
-            series.IsValueShownAsLabel = True
-            ' Pie charts are automatically color coded by slice
             chartIncidents.Palette = SysChart.ChartColorPalette.SeaGreen
-
-            If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
-                For Each row As DataRow In dt.Rows
-                    series.Points.AddXY(row("Status").ToString(), row("Count"))
-                Next
-            Else
-                series.Points.AddXY("No Data", 0)
-            End If
-
-            chartIncidents.Series.Add(series)
             chartIncidents.Titles.Add("Status Breakdown: " & selection)
         End If
-    End Sub
+
+        series.IsValueShownAsLabel = True
+
+        If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
+            For Each row As DataRow In dt.Rows
+                Dim xVal As String = If(isAllIncidents, row("IncidentType").ToString(), row("Status").ToString())
+                ' Handle nulls
+                If String.IsNullOrEmpty(xVal) Then xVal = "Unknown"
+
+                Dim yVal As Integer = Convert.ToInt32(row("Count"))
+                series.Points.AddXY(xVal, yVal)
+            Next
+        Else
+            series.Points.AddXY("No Data", 0)
+        End If
+
+        chartIncidents.Series.Add(series)
+    End Function
 
     ' --- NAVIGATION BUTTONS ---
+    ' (These remain mostly the same, but we trigger the async refreshes)
 
-    Private Sub btnResidents_Click(sender As Object, e As EventArgs) Handles btnResidents.Click
+    Private Async Sub btnResidents_Click(sender As Object, e As EventArgs) Handles btnResidents.Click
         Dim frm As New frmManageResidents()
         frm.ShowDialog()
-        LoadStats()
+        Await LoadStatsAsync()
     End Sub
 
-    Private Sub btnBlotter_Click(sender As Object, e As EventArgs) Handles btnBlotter.Click
-        ' Admin Blotter Form
+    Private Async Sub btnBlotter_Click(sender As Object, e As EventArgs) Handles btnBlotter.Click
         Dim frm As New frmBlotter()
         frm.ShowDialog()
-        LoadStats()
-        LoadChart()
+        Await LoadStatsAsync()
+        Await LoadChartAsync()
     End Sub
 
-    Private Sub btnConcerns_Click(sender As Object, e As EventArgs) Handles btnConcerns.Click
-        ' Admin Concerns Form
+    Private Async Sub btnConcerns_Click(sender As Object, e As EventArgs) Handles btnConcerns.Click
         Dim frm As New frmConcerns()
         frm.ShowDialog()
-        LoadStats()
-        LoadChart()
+        Await LoadStatsAsync()
+        Await LoadChartAsync()
     End Sub
 
     Private Sub btnClearance_Click(sender As Object, e As EventArgs) Handles btnClearance.Click
