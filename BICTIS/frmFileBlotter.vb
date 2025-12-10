@@ -2,25 +2,35 @@
 
 Public Class frmFileBlotter
     Private Sub frmFileBlotter_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Ensure items are populated
-        If cbType.Items.Count = 0 Then
-            cbType.Items.AddRange(New String() {"Physical Injury", "Theft", "Property Dispute", "Harassment", "Other"})
-        End If
+        ' POPULATE DROPDOWN WITH FORMAL CASES / DISPUTES ONLY
+        cbType.Items.Clear()
+        cbType.Items.AddRange(New String() {
+            "Physical Injury",
+            "Theft / Robbery",
+            "Property / Land Dispute",
+            "Harassment / Threats",
+            "Unjust Vexation",
+            "Malicious Mischief",
+            "Estafa / Swindling",
+            "Libel / Slander",
+            "Other"
+        })
+        cbType.SelectedIndex = 0
     End Sub
 
     Private Sub btnSubmit_Click(sender As Object, e As EventArgs) Handles btnSubmit.Click
-        ' VALIDATION CONDITION
+        ' VALIDATION
         If String.IsNullOrWhiteSpace(cbType.Text) OrElse
-           String.IsNullOrWhiteSpace(txtRespondent.Text) OrElse
-           String.IsNullOrWhiteSpace(txtNarrative.Text) Then
+           String.IsNullOrWhiteSpace(txtNarrative.Text) OrElse
+           String.IsNullOrWhiteSpace(txtRespondent.Text) Then
 
-            MessageBox.Show("Please fill in all details, including the Respondent's name and the Narrative.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Please fill in all details, including the Respondent's name.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
         Dim respondentInfo As String = "[Respondent: " & txtRespondent.Text & "] " & txtNarrative.Text
 
-        ' Insert
+        ' Save with Category = 'Blotter'
         Dim query As String = "INSERT INTO tblIncidents (ComplainantID, RespondentID, IncidentType, Narrative, Status, IncidentDate, Category) " &
                               "VALUES (@uid, 0, @type, @narr, 'Pending', @date, 'Blotter')"
 
