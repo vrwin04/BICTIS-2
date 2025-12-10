@@ -19,9 +19,12 @@ Public Module Session
         Dim dt As New DataTable()
         Using conn As New OleDbConnection(connectionString)
             Using cmd As New OleDbCommand(query, conn)
+                ' Add parameters if they exist
                 If parameters IsNot Nothing Then
                     For Each param In parameters
-                        cmd.Parameters.AddWithValue(param.Key, param.Value)
+                        ' Fix for potential DBNull values
+                        Dim value As Object = If(param.Value, DBNull.Value)
+                        cmd.Parameters.AddWithValue(param.Key, value)
                     Next
                 End If
                 Try
@@ -29,7 +32,7 @@ Public Module Session
                     Dim adapter As New OleDbDataAdapter(cmd)
                     adapter.Fill(dt)
                 Catch ex As Exception
-                    MessageBox.Show("DB Error: " & ex.Message)
+                    MessageBox.Show("DB Error: " & ex.Message & vbCrLf & "Query: " & query)
                 End Try
             End Using
         End Using
@@ -41,7 +44,8 @@ Public Module Session
             Using cmd As New OleDbCommand(query, conn)
                 If parameters IsNot Nothing Then
                     For Each param In parameters
-                        cmd.Parameters.AddWithValue(param.Key, param.Value)
+                        Dim value As Object = If(param.Value, DBNull.Value)
+                        cmd.Parameters.AddWithValue(param.Key, value)
                     Next
                 End If
                 Try
@@ -49,7 +53,7 @@ Public Module Session
                     cmd.ExecuteNonQuery()
                     Return True
                 Catch ex As Exception
-                    MessageBox.Show("DB Error: " & ex.Message)
+                    MessageBox.Show("DB Error: " & ex.Message & vbCrLf & "Query: " & query)
                     Return False
                 End Try
             End Using
@@ -61,7 +65,8 @@ Public Module Session
             Using cmd As New OleDbCommand(query, conn)
                 If parameters IsNot Nothing Then
                     For Each param In parameters
-                        cmd.Parameters.AddWithValue(param.Key, param.Value)
+                        Dim value As Object = If(param.Value, DBNull.Value)
+                        cmd.Parameters.AddWithValue(param.Key, value)
                     Next
                 End If
                 Try
