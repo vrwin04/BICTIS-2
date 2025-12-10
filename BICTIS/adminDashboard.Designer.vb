@@ -15,9 +15,9 @@ Partial Class adminDashboard
 
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim ChartArea1 As SysChart.ChartArea = New SysChart.ChartArea()
-        Dim Legend1 As SysChart.Legend = New SysChart.Legend()
-        Dim Series1 As SysChart.Series = New SysChart.Series()
+        Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Me.pnlBorder = New System.Windows.Forms.Panel()
         Me.pnlMainContent = New System.Windows.Forms.Panel()
         Me.pnlChartSection = New System.Windows.Forms.Panel()
@@ -454,5 +454,5 @@ Partial Class adminDashboard
     Friend WithEvents cbIncidentType As ComboBox
     Friend WithEvents Label2 As Label
     Friend WithEvents lblChartTitle As Label
-    Friend WithEvents chartIncidents As SysChart.Chart
+    Friend WithEvents chartIncidents As System.Windows.Forms.DataVisualization.Charting.Chart
 End Class
