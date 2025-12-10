@@ -18,15 +18,13 @@ Public Class adminDashboard
     End Sub
 
     Private Sub LoadStats()
-        ' Count Users (Residents)
         Dim userCount As Integer = Session.GetCount("SELECT COUNT(*) FROM tblResidents WHERE Role='User'")
         lblTotalUsers.Text = userCount.ToString()
 
-        ' Count Pending Cases
+        ' Count Pending Cases (Both Blotter and Concerns)
         Dim pending As Integer = Session.GetCount("SELECT COUNT(*) FROM tblIncidents WHERE Status='Pending'")
         lblPendingCases.Text = pending.ToString()
 
-        ' Visual Alert
         If pending > 0 Then
             lblPendingCases.ForeColor = Color.Red
         Else
@@ -35,7 +33,6 @@ Public Class adminDashboard
     End Sub
 
     Private Sub LoadFilterOptions()
-        ' Hardcode or Fetch from DB. Here we hardcode for simplicity + "All"
         cbIncidentType.Items.Clear()
         cbIncidentType.Items.Add("All Incidents")
         cbIncidentType.Items.Add("Noise Complaint")
@@ -43,7 +40,7 @@ Public Class adminDashboard
         cbIncidentType.Items.Add("Neighborhood Dispute")
         cbIncidentType.Items.Add("Suspicious Activity")
         cbIncidentType.Items.Add("Other")
-        cbIncidentType.SelectedIndex = 0 ' Default to All
+        cbIncidentType.SelectedIndex = 0
     End Sub
 
     Private Sub cbIncidentType_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbIncidentType.SelectedIndexChanged
@@ -59,7 +56,7 @@ Public Class adminDashboard
         Dim selection As String = cbIncidentType.Text
 
         If selection = "All Incidents" Then
-            ' MODE 1: Show Bar Chart of ALL Types
+            ' Show Bar Chart of ALL Types
             Dim query As String = "SELECT IncidentType, COUNT(*) as [Count] FROM tblIncidents GROUP BY IncidentType"
             Dim dt As DataTable = Session.GetDataTable(query)
 
@@ -79,7 +76,7 @@ Public Class adminDashboard
             chartIncidents.Titles.Add("All Incidents Overview")
 
         Else
-            ' MODE 2: Show Pie Chart of STATUS for Selected Type
+            ' Show Pie Chart of STATUS for Selected Type
             Dim query As String = "SELECT Status, COUNT(*) as [Count] FROM tblIncidents WHERE IncidentType=@type GROUP BY Status"
             Dim params As New Dictionary(Of String, Object)
             params.Add("@type", selection)
@@ -95,7 +92,6 @@ Public Class adminDashboard
                     series.Points.AddXY(row("Status").ToString(), row("Count"))
                 Next
             Else
-                ' Show empty placeholder if no data
                 series.Points.AddXY("No Data", 0)
             End If
 
@@ -113,7 +109,16 @@ Public Class adminDashboard
     End Sub
 
     Private Sub btnBlotter_Click(sender As Object, e As EventArgs) Handles btnBlotter.Click
+        ' Admin Blotter Form
         Dim frm As New frmBlotter()
+        frm.ShowDialog()
+        LoadStats()
+        LoadChart()
+    End Sub
+
+    Private Sub btnConcerns_Click(sender As Object, e As EventArgs) Handles btnConcerns.Click
+        ' Admin Concerns Form
+        Dim frm As New frmConcerns()
         frm.ShowDialog()
         LoadStats()
         LoadChart()

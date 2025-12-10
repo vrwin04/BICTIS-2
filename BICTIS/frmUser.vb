@@ -6,26 +6,32 @@ Public Class frmUser
     End Sub
 
     Private Sub btnReport_Click(sender As Object, e As EventArgs) Handles btnReport.Click
-        ' NEW FORM for Reporting
+        ' OPEN CONCERN FORM
         Dim frm As New frmReportConcern()
         frm.ShowDialog()
     End Sub
 
-    Private Sub btnMyBlotter_Click(sender As Object, e As EventArgs) Handles btnMyBlotter.Click
-        ' Check if user is involved in cases (as Complainant OR Respondent)
-        Dim sql As String = "SELECT IncidentType, Status, IncidentDate, Narrative FROM tblIncidents " &
-                            "WHERE ComplainantID=" & Session.CurrentResidentID & " OR RespondentID=" & Session.CurrentResidentID
+    Private Sub btnFileBlotter_Click(sender As Object, e As EventArgs) Handles btnFileBlotter.Click
+        ' OPEN BLOTTER FORM
+        Dim frm As New frmFileBlotter()
+        frm.ShowDialog()
+    End Sub
 
+    Private Sub btnMyBlotter_Click(sender As Object, e As EventArgs) Handles btnMyBlotter.Click
+        ' Show History of both Blotters and Concerns
+        Dim sql As String = "SELECT Category, IncidentType, Status, IncidentDate FROM tblIncidents " &
+                            "WHERE ComplainantID=" & Session.CurrentResidentID & " ORDER BY IncidentID DESC"
         Dim dt As DataTable = Session.GetDataTable(sql)
 
         If dt.Rows.Count > 0 Then
-            Dim msg As String = "Your Cases:" & vbCrLf
+            Dim msg As String = "YOUR HISTORY:" & vbCrLf & vbCrLf
             For Each row As DataRow In dt.Rows
-                msg &= "- " & row("IncidentType").ToString() & " [" & row("Status").ToString() & "]" & vbCrLf
+                ' Display Category to distinguish between the two
+                msg &= "[" & row("Category").ToString().ToUpper() & "] " & row("IncidentType").ToString() & " - " & row("Status").ToString() & vbCrLf
             Next
-            MessageBox.Show(msg, "My Blotter History", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show(msg, "My Records", MessageBoxButtons.OK, MessageBoxIcon.Information)
         Else
-            MessageBox.Show("You have no blotter records.", "Clean Record", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("No records found.", "Clean Record", MessageBoxButtons.OK, MessageBoxIcon.Information)
         End If
     End Sub
 

@@ -23,6 +23,7 @@ Partial Class frmUser
         Me.pnlSidebar = New System.Windows.Forms.Panel()
         Me.btnLogout = New System.Windows.Forms.Button()
         Me.btnMyBlotter = New System.Windows.Forms.Button()
+        Me.btnFileBlotter = New System.Windows.Forms.Button()
         Me.btnReport = New System.Windows.Forms.Button()
         Me.pnlLogo = New System.Windows.Forms.Panel()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -62,7 +63,7 @@ Partial Class frmUser
         Me.Label2.ForeColor = System.Drawing.Color.Silver
         Me.Label2.Location = New System.Drawing.Point(150, 200)
         Me.Label2.Name = "Label2"
-        Me.Label2.Text = "Select 'Report a Concern' to file a complaint."
+        Me.Label2.Text = "Select an option from the sidebar."
         '
         'pnlHeader
         '
@@ -89,6 +90,7 @@ Partial Class frmUser
         Me.pnlSidebar.BackColor = System.Drawing.Color.FromArgb(0, 150, 136)
         Me.pnlSidebar.Controls.Add(Me.btnLogout)
         Me.pnlSidebar.Controls.Add(Me.btnMyBlotter)
+        Me.pnlSidebar.Controls.Add(Me.btnFileBlotter)
         Me.pnlSidebar.Controls.Add(Me.btnReport)
         Me.pnlSidebar.Controls.Add(Me.pnlLogo)
         Me.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left
@@ -118,14 +120,30 @@ Partial Class frmUser
         Me.btnMyBlotter.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnMyBlotter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.btnMyBlotter.ForeColor = System.Drawing.Color.White
-        Me.btnMyBlotter.Location = New System.Drawing.Point(0, 130)
+        Me.btnMyBlotter.Location = New System.Drawing.Point(0, 180)
         Me.btnMyBlotter.Name = "btnMyBlotter"
         Me.btnMyBlotter.Padding = New System.Windows.Forms.Padding(15, 0, 0, 0)
         Me.btnMyBlotter.Size = New System.Drawing.Size(220, 50)
-        Me.btnMyBlotter.TabIndex = 2
-        Me.btnMyBlotter.Text = "My Blotter Cases"
+        Me.btnMyBlotter.TabIndex = 3
+        Me.btnMyBlotter.Text = "My History"
         Me.btnMyBlotter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.btnMyBlotter.UseVisualStyleBackColor = True
+        '
+        'btnFileBlotter
+        '
+        Me.btnFileBlotter.Dock = System.Windows.Forms.DockStyle.Top
+        Me.btnFileBlotter.FlatAppearance.BorderSize = 0
+        Me.btnFileBlotter.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnFileBlotter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.btnFileBlotter.ForeColor = System.Drawing.Color.White
+        Me.btnFileBlotter.Location = New System.Drawing.Point(0, 130)
+        Me.btnFileBlotter.Name = "btnFileBlotter"
+        Me.btnFileBlotter.Padding = New System.Windows.Forms.Padding(15, 0, 0, 0)
+        Me.btnFileBlotter.Size = New System.Drawing.Size(220, 50)
+        Me.btnFileBlotter.TabIndex = 2
+        Me.btnFileBlotter.Text = "File Blotter Case"
+        Me.btnFileBlotter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me.btnFileBlotter.UseVisualStyleBackColor = True
         '
         'btnReport
         '
@@ -191,6 +209,7 @@ Partial Class frmUser
     Friend WithEvents pnlLogo As Panel
     Friend WithEvents Label1 As Label
     Friend WithEvents btnReport As Button
+    Friend WithEvents btnFileBlotter As Button
     Friend WithEvents btnMyBlotter As Button
     Friend WithEvents btnLogout As Button
     Friend WithEvents pnlHeader As Panel

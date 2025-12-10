@@ -1,7 +1,4 @@
-﻿' ALIAS TO FIX CHART ERRORS
-Imports SysChart = System.Windows.Forms.DataVisualization.Charting
-
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class adminDashboard
     Inherits System.Windows.Forms.Form
 
@@ -43,6 +40,7 @@ Partial Class adminDashboard
         Me.pnlSidebar = New System.Windows.Forms.Panel()
         Me.btnLogout = New System.Windows.Forms.Button()
         Me.btnClearance = New System.Windows.Forms.Button()
+        Me.btnConcerns = New System.Windows.Forms.Button()
         Me.btnBlotter = New System.Windows.Forms.Button()
         Me.btnResidents = New System.Windows.Forms.Button()
         Me.pnlLogo = New System.Windows.Forms.Panel()
@@ -279,6 +277,7 @@ Partial Class adminDashboard
         Me.pnlSidebar.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(62, Byte), Integer), CType(CType(80, Byte), Integer))
         Me.pnlSidebar.Controls.Add(Me.btnLogout)
         Me.pnlSidebar.Controls.Add(Me.btnClearance)
+        Me.pnlSidebar.Controls.Add(Me.btnConcerns)
         Me.pnlSidebar.Controls.Add(Me.btnBlotter)
         Me.pnlSidebar.Controls.Add(Me.btnResidents)
         Me.pnlSidebar.Controls.Add(Me.pnlLogo)
@@ -313,7 +312,7 @@ Partial Class adminDashboard
         Me.btnClearance.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnClearance.Font = New System.Drawing.Font("Segoe UI", 11.0!)
         Me.btnClearance.ForeColor = System.Drawing.Color.WhiteSmoke
-        Me.btnClearance.Location = New System.Drawing.Point(0, 200)
+        Me.btnClearance.Location = New System.Drawing.Point(0, 260)
         Me.btnClearance.Name = "btnClearance"
         Me.btnClearance.Padding = New System.Windows.Forms.Padding(20, 0, 0, 0)
         Me.btnClearance.Size = New System.Drawing.Size(240, 60)
@@ -321,6 +320,24 @@ Partial Class adminDashboard
         Me.btnClearance.Text = "Manage Clearances"
         Me.btnClearance.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.btnClearance.UseVisualStyleBackColor = False
+        '
+        'btnConcerns
+        '
+        Me.btnConcerns.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(62, Byte), Integer), CType(CType(80, Byte), Integer))
+        Me.btnConcerns.Dock = System.Windows.Forms.DockStyle.Top
+        Me.btnConcerns.FlatAppearance.BorderSize = 0
+        Me.btnConcerns.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(73, Byte), Integer), CType(CType(94, Byte), Integer))
+        Me.btnConcerns.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnConcerns.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.btnConcerns.ForeColor = System.Drawing.Color.WhiteSmoke
+        Me.btnConcerns.Location = New System.Drawing.Point(0, 200)
+        Me.btnConcerns.Name = "btnConcerns"
+        Me.btnConcerns.Padding = New System.Windows.Forms.Padding(20, 0, 0, 0)
+        Me.btnConcerns.Size = New System.Drawing.Size(240, 60)
+        Me.btnConcerns.TabIndex = 4
+        Me.btnConcerns.Text = "Barangay Concerns"
+        Me.btnConcerns.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me.btnConcerns.UseVisualStyleBackColor = False
         '
         'btnBlotter
         '
@@ -416,6 +433,7 @@ Partial Class adminDashboard
     Friend WithEvents pnlLogo As Panel
     Friend WithEvents lblLogo As Label
     Friend WithEvents btnBlotter As Button
+    Friend WithEvents btnConcerns As Button
     Friend WithEvents btnResidents As Button
     Friend WithEvents btnClearance As Button
     Friend WithEvents btnLogout As Button
@@ -436,6 +454,5 @@ Partial Class adminDashboard
     Friend WithEvents cbIncidentType As ComboBox
     Friend WithEvents Label2 As Label
     Friend WithEvents lblChartTitle As Label
-    ' IMPORTANT: Use the Alias here!
     Friend WithEvents chartIncidents As SysChart.Chart
 End Class
