@@ -104,7 +104,6 @@ Public Class adminDashboard
 
         If isAllIncidents Then
             series.ChartType = SysChart.SeriesChartType.Column
-            ' We will set colors manually per point below
             chartIncidents.Titles.Add("All Incidents Overview")
         Else
             series.ChartType = SysChart.SeriesChartType.Pie
@@ -126,10 +125,10 @@ Public Class adminDashboard
                 Dim pIndex As Integer = series.Points.AddXY(xVal, yVal)
                 Dim p As SysChart.DataPoint = series.Points(pIndex)
 
-                ' --- COLOR CODING LOGIC ---
+                ' --- DISTINCT COLOR CODING ---
                 If isAllIncidents Then
                     Select Case xVal
-                        ' CRIMES (Reds/Purples)
+                        ' CRIMES (Warm/Dark Colors)
                         Case "Physical Injury" : p.Color = Color.Crimson
                         Case "Theft / Robbery" : p.Color = Color.DarkRed
                         Case "Harassment / Threats" : p.Color = Color.OrangeRed
@@ -139,7 +138,7 @@ Public Class adminDashboard
                         Case "Libel / Slander" : p.Color = Color.SlateBlue
                         Case "Property / Land Dispute" : p.Color = Color.SaddleBrown
 
-                        ' CONCERNS (Greens/Yellows/Blues)
+                        ' CONCERNS (Cool/Earth Colors)
                         Case "Noise Complaint" : p.Color = Color.DarkOrange
                         Case "Waste Disposal / Trash" : p.Color = Color.ForestGreen
                         Case "Suspicious Activity" : p.Color = Color.DimGray
@@ -148,6 +147,7 @@ Public Class adminDashboard
                         Case "Animal Control / Stray Pets" : p.Color = Color.OliveDrab
                         Case "Curfew Violation" : p.Color = Color.MidnightBlue
 
+                        Case "Other" : p.Color = Color.Gray
                         Case Else : p.Color = Color.SteelBlue
                     End Select
                 End If
